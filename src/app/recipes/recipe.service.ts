@@ -1,37 +1,28 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
+
+import { Recipe } from './recipe.model';
 import { Ingredient } from '../shared/ingredient.model';
 import { ShoppingListService } from '../shopping-list/shopping-list.service';
-import { Recipe } from './recipe.model';
 
 @Injectable()
 export class RecipeService {
-  // recipeSelected = new EventEmitter<Recipe>();
-  recipeSelected = new Subject<Recipe>();
   recipesChanged = new Subject<Recipe[]>();
-  ingredientsChanged = new Subject<Ingredient[]>();
 
   // private recipes: Recipe[] = [
   //   new Recipe(
-  //     'A Test Recipe 1',
-  //     'Recipe description 1',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR6Ubtqjg-peKi8NuJnkPNGA3Dz6D6pqjGDHg&usqp=CAU',
-  //     [new Ingredient('Meat', 1), new Ingredient('French fries', 20)]
+  //     'Tasty Schnitzel',
+  //     'A super-tasty Schnitzel - just awesome!',
+  //     'https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG',
+  //     [new Ingredient('Meat', 1), new Ingredient('French Fries', 20)]
   //   ),
   //   new Recipe(
-  //     'A Test Recipe 2',
-  //     'Recipe description 2',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT07oLsIIvtuzn6M2L-3fC82N_--QlCKw33IA&usqp=CAU',
-  //     [new Ingredient('Tomatoes', 2), new Ingredient('Potatoes', 10)]
-  //   ),
-  //   new Recipe(
-  //     'A Test Recipe 3',
-  //     'Recipe description 3',
-  //     'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDw0zfbjExXcN9ajtY8DpFJZBBGak2nIjAvw&usqp=CAU',
-  //     [new Ingredient('Rise', 1), new Ingredient('Meat', 2)]
+  //     'Big Fat Burger',
+  //     'What else you need to say?',
+  //     'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg',
+  //     [new Ingredient('Buns', 2), new Ingredient('Meat', 1)]
   //   ),
   // ];
-
   private recipes: Recipe[] = [];
 
   constructor(private slService: ShoppingListService) {}
@@ -49,13 +40,8 @@ export class RecipeService {
     return this.recipes[index];
   }
 
-  onAddIngredientsToRecipe(ingredients: Ingredient[]) {
-    this.slService.toShoppingList(ingredients);
-  }
-
-  deleteRecipe(index: number) {
-    this.recipes.splice(index, 1);
-    this.recipesChanged.next(this.recipes.slice());
+  addIngredientsToShoppingList(ingredients: Ingredient[]) {
+    this.slService.addIngredients(ingredients);
   }
 
   addRecipe(recipe: Recipe) {
@@ -65,7 +51,11 @@ export class RecipeService {
 
   updateRecipe(index: number, newRecipe: Recipe) {
     this.recipes[index] = newRecipe;
-    // this.recipes[index] = newRecipe;
+    this.recipesChanged.next(this.recipes.slice());
+  }
+
+  deleteRecipe(index: number) {
+    this.recipes.splice(index, 1);
     this.recipesChanged.next(this.recipes.slice());
   }
 }

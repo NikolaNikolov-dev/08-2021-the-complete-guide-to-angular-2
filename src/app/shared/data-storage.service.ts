@@ -1,9 +1,10 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { exhaustMap, map, take, tap } from 'rxjs/operators';
-import { AuthService } from '../auth/auth.service';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { map, tap, take, exhaustMap } from 'rxjs/operators';
+
 import { Recipe } from '../recipes/recipe.model';
 import { RecipeService } from '../recipes/recipe.service';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class DataStorageService {
@@ -18,6 +19,7 @@ export class DataStorageService {
     this.http
       .put(
         'https://ng-project-recipe-book-dac4a-default-rtdb.firebaseio.com/recipes.json',
+
         recipes
       )
       .subscribe((response) => {

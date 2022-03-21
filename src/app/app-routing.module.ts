@@ -1,57 +1,30 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
-import { AuthComponent } from './auth/auth.component';
-import { AuthGuard } from './auth/auth.guard';
-import { NotAuthGuard } from './auth/notAuth.guard';
-import { RecipeDetailComponent } from './recipes/recipe-detail/recipe-detail.component';
-import { RecipeEditComponent } from './recipes/recipe-edit/recipe-edit.component';
-import { RecipeStartComponent } from './recipes/recipe-start/recipe-start.component';
-import { RecipesResolverService } from './recipes/recipes-resolver.service';
-import { RecipesComponent } from './recipes/recipes.component';
-import { NotFoundComponent } from './shared/not-found/not-found.component';
-import { ShoppingListComponent } from './shopping-list/shopping-list.component';
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 const appRoutes: Routes = [
-  {
-    path: '',
-    redirectTo: '/recipes',
-    pathMatch: 'full',
-  },
+  { path: '', redirectTo: '/recipes', pathMatch: 'full' },
   {
     path: 'recipes',
-    component: RecipesComponent,
-    canActivate: [AuthGuard],
-    children: [
-      { path: '', component: RecipeStartComponent },
-      { path: 'new', component: RecipeEditComponent },
-      {
-        path: ':id',
-        component: RecipeDetailComponent,
-        resolve: [RecipesResolverService],
-      },
-      {
-        path: ':id/edit',
-        component: RecipeEditComponent,
-        resolve: [RecipesResolverService],
-      },
-    ],
+    loadChildren: () =>
+      import('./recipes/recipes.module').then((m) => m.RecipesModule),
   },
   {
     path: 'shopping-list',
-    component: ShoppingListComponent,
+    loadChildren: () =>
+      import('./shopping-list/shopping-list.module').then(
+        (m) => m.ShoppingListModule
+      ),
   },
   {
     path: 'auth',
-    component: AuthComponent,
-    canActivate: [NotAuthGuard],
+    loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
   },
-  // {
-  //   path: '**',
-  //   component: NotFoundComponent,
-  // },
 ];
+
 @NgModule({
-  imports: [RouterModule.forRoot(appRoutes)],
+  imports: [
+    RouterModule.forRoot(appRoutes, { preloadingStrategy: PreloadAllModules }),
+  ],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}
